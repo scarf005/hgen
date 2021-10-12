@@ -68,13 +68,20 @@ def get_func_span(lines: list[str]) -> tuple[int, int]:
     )
 
 
-def insert_protos(dest: Path, *, protos: list[str]) -> None:
-    lines = get_lines_from(dest)
-    span = get_func_span(lines)
-
-    before, after = lines[: span[0] + 1], lines[span[1] :]
-
-    dest.write_text("\n".join(before + protos + after))
+def insert_protos(dest_dir: Path, *, protos: list[str]) -> None:
+    for dest in dest_dir.glob("**/*.h"):
+        lines = get_lines_from(dest)
+        try:
+            span = get_func_span(lines)
+            before, after = lines[: span[0] + 1], lines[span[1] :]
+            dest.write_text("\n".join(before + protos + after))
+            break
+        except SyntaxError:
+            pass
+    else:
+        raise NotImplementedError(
+            'could not find either header or function definition flags'
+            )
 
 
 # ===== Sources =====
@@ -117,10 +124,10 @@ def create_protos(src_dir: Path) -> list[str]:
 # ===== Main =====
 
 
-def main(dest: Path, src_dir: Path):
+def main(dest_dir: Path, src_dir: Path):
     protos = create_protos(src_dir)
 
-    insert_protos(dest, protos = protos)
+    insert_protos(dest_dir, protos = protos)
 
 
 if __name__ == "__main__":
