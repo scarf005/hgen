@@ -5,29 +5,8 @@ from pathlib import Path
 from re import compile, Pattern, split
 from typing import ClassVar, Callable
 import re
-
-
-@dataclass(frozen=True)
-class Color:
-    red = "\033[91m"
-    green = "\033[92m"
-    blue = "\033[94m"
-    cyan = "\033[96m"
-    white = "\033[97m"
-    yellow = "\033[93m"
-    magenta = "\033[95m"
-    grey = "\033[90m"
-    black = "\033[90m"
-    default = "\033[99m"
-    end = "\033[0m"
-
-    @classmethod
-    def cstr(cls, color: str, string: str):
-        return f"{getattr(cls, color)}{string}{Color.end}"
-
-    @classmethod
-    def cprint(cls, color: str, string: str):
-        print(cls.cstr(color, string))
+import colors
+from colors import cprint, cstr
 
 
 def get_lines_from(file: Path) -> list[str]:
@@ -55,14 +34,14 @@ class Proto:
 
     def __str__(self) -> str:
         return "\n".join(
-            [Color.cstr("magenta", self.header_style)]
+            [colors.cstr("magenta", self.header_style)]
             + [Proto.color_proto(p) for p in self.prototypes]
             + [""]
         )
 
     def load_func_protos_from_file(self):
         lines = iter(get_lines_from(self.file))
-        Color.cprint("blue", f"reading: {self.filename}")
+        colors.cprint("blue", f"reading: {self.filename}")
         for line in lines:
             if Proto.func_def.match(line) and next(lines) == "{":
                 for incode in lines:
@@ -94,17 +73,18 @@ class Proto:
     @staticmethod  # TODO: colors from clsmethod
     def color_proto(prototype: str):
         type, name, paramstr = re.split(r"\t+|\(", prototype[:-2])
-        result = f'{Color.cstr("red", type)} {Color.cstr("magenta", name)}('
+        result = f'{colors.cstr("red", type)} {colors.cstr("magenta", name)}('
         params = iter(paramstr.split())
         for p in params:
-            result += Color.cstr("red", p)
+            result += colors.cstr("red", p)
             ptr, name = re.split(r"(^\**)", next(params))[1:]
-            result += f"{ptr} {Color.cstr('blue', name)} "
+            result += f"{ptr} {colors.cstr('blue', name)} "
         return result[:-1] + ");"
 
 
-curr = Proto(Path("lib/src/libft/ystrlen.c"))
-print(repr(curr))
-# print(curr.filename)
-# print(len(curr))
-# print(curr)
+if __name__ == "__main__":
+    curr = Proto(Path("../so_long/lib/src/libft/ystrlen.c"))
+    # print(repr(curr))
+    # print(curr.filename)
+    # print(len(curr))
+    print(curr)
