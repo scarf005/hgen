@@ -1,71 +1,21 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+from utils import get_lines_from
 from sys import argv
-from re import compile, IGNORECASE
-from dataclasses import dataclass
-
-# ===== Terminal Output =====
-
-
-@dataclass(frozen=True)
-class Clr:
-    M = "\033[95m"
-    B = "\033[94m"
-    C = "\033[96m"
-    G = "\033[92m"
-    Y = "\033[93m"
-    R = "\033[91m"
-    B = "\033[1m"
-    U = "\033[4m"
-    END = "\033[0m"
-
-    @classmethod
-    def color_str(cls, color, string):
-        return f"{getattr(cls, color)}{string}{Clr.END}"
-
-    @classmethod
-    def cprint(cls, color, string):
-        print(cls.color_str(color, string))
-
-# ===== Regexes =====
-
-
-def formatted_comment(which):
-    return compile(fr"[/][/*] *={{5,}} *{which} *={{5,}}", IGNORECASE)
-
-
-@dataclass(frozen=True)
-class Regex:
-    func_begin = formatted_comment(r"functions?")
-    func_end = [compile("#endif"), formatted_comment(r".*")]
-    func_def = compile(r"(\w*)\t(\w*)(?!main)\(.*\)")
-
-
-# ===== Utils & Prototype Dataclass =====
-
-
-def get_lines_from(file: Path) -> list[str]:
-    return file.read_text().splitlines(keepends=False)
-
-@dataclass
-class Protos:
-
-    ...
-
-# ===== Headers =====
+from regexrules import RegexRules
+from prototypes import Proto
+from colors import cstr, cprint
 
 
 def get_func_span(lines: list[str]) -> tuple[int, int]:
     begin = None
     for i, line in enumerate(lines):
-        if Regex.func_begin.match(line):
+        if RegexRules.FLAG_BEGIN.match(line):
             begin = i
-        elif begin and any(reg.match(line) for reg in Regex.func_end):
+        elif begin and any(reg.match(line) for reg in RegexRules.FLAG_END):
             return begin, i
-    raise SyntaxError(
-        Clr.color_str("R", "// ===== Functions ===== flag were never found")
-    )
+    raise SyntaxError(cstr("red", "function flag header was never found"))
 
 
 def insert_protos(dest_dir: Path, *, protos: list[str]) -> None:
@@ -82,52 +32,35 @@ def insert_protos(dest_dir: Path, *, protos: list[str]) -> None:
         raise NotImplementedError(
             'could not find either header or function definition flags'
             )
-
-
+#
 # ===== Sources =====
 
-
-def get_func_protos_in_file(file: Path) -> list[str]:
-    results, lines = [], iter(get_lines_from(file))
-    print(f"reading: {file.name}")
-    for line in lines:
-        if Regex.func_def.match(line) and next(lines) == "{":
-            for inside in lines:
-                if inside == "}":
-                    results.append(f"{line};")
-                    break
-    return results
-
-def create_protos(src_dir: Path) -> list[str]:
-    results = []
-    counter = {'sources': 0, 'prototypes': 0}
+def crawl_prototypes(src_dir: Path):
+    results: list[Proto] = []
+    cprint('magenta', f'>> from {src_dir}')
     for src in src_dir.glob("**/*.c"):
-        file_protos = [f'\n// {src.name}']
-        file_protos.extend(sorted(get_func_protos_in_file(src)))
-        if len(file_protos):
-            counter['sources'] += 1
-            counter['prototypes'] += len(file_protos) - 1
-            results.extend(file_protos)
-    results.append('')
-
-    if counter['prototypes'] > 0:
-        Clr.cprint(
-            "G",
-            f"found {counter['prototypes']} prototypes "
-            f"in {counter['sources']} sources"
-        )
-    else:
-        Clr.cprint("Y", f"no prototypes found in {counter['sources']} sources")
+        try:
+            target = Proto(src)
+            results.append(target)
+            status, num = 'green', f'x{len(target)}'
+        except:
+            status, num = 'yellow', ''
+        finally:
+            print(f"{cstr(status, 'read')} {cstr('blue', src.name)} ({num})")
+    assert len(results), cstr('red', f"no function prototypes found in this subdirectory(or file)")
+    print(results)
     return results
 
+def update_header_prototypes(dest_dir: Path, src_dir: Path):
+    """find and update c function prototypes with comment flags.
 
-# ===== Main =====
-
-
-def main(dest_dir: Path, src_dir: Path):
-    protos = create_protos(src_dir)
-
-    insert_protos(dest_dir, protos = protos)
+    Args:
+        dest_dir (Path): directory(or file) to search for headers recursively
+        src_dir (Path): directory(or file) to search for prototypes recursively
+    """
+    ...
+    prototypes = crawl_prototypes(src_dir)
+    # insert_protos(dest_dir, protos = protos)
 
 
 if __name__ == "__main__":
@@ -137,8 +70,15 @@ if __name__ == "__main__":
         case [dest, src_dir, common]:
             com = argv[3]
         case _:
+            # FIXME only for development
+            update_header_prototypes(
+                Path('../so_long/includes/lib'),
+                Path('../so_long/lib/src'),
+            )
+            exit()
+            # FIXME end fixme
             print("to use: ./protogen.py HEADER.h SRC DIRECTORY [Common]")
             exit()
 
-    dest, src_dir = (Path(com) / Path(argv[i]) for i in range(1, 3))
-    main(dest, src_dir)
+    dest_dir, src_dir = (Path(com) / Path(argv[i]) for i in range(1, 3))
+    update_header_prototypes(dest_dir, src_dir)

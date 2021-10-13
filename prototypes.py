@@ -2,27 +2,31 @@
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from re import compile, Pattern, split
-from typing import ClassVar, Callable
 import re
-import colors
 from colors import cprint, cstr
-
-
-def get_lines_from(file: Path) -> list[str]:
-    return file.read_text().splitlines(keepends=False)
+from utils import get_lines_from
+from regexrules import RegexRules
 
 
 @dataclass
 class Proto:
+    """container for c function prototypes defined inside source code."""
+
     file: Path
-    func_def: ClassVar[Pattern] = compile(r"^(\w* ?)+\t(\w*)(?!main)\(.*\)$")
     header_style: str = field(init=False)
 
     prototypes: list[str] = field(default_factory=list)
 
     def __post_init__(self):
         self.load_func_protos_from_file()
+        assert len(self.prototypes), (
+            f"{cstr('yellow', self.filename)} "
+            f"{cstr('red',f'never had any BSD-style C function prototypes')}"
+        )
+
+        self.align_protos_indentation()
+        self.prototypes.sort(key=len)
+
         self.header_style = f"// < {self.filename} >"
 
     def __len__(self) -> int:
@@ -34,23 +38,23 @@ class Proto:
 
     def __str__(self) -> str:
         return "\n".join(
-            [colors.cstr("magenta", self.header_style)]
+            [cstr("magenta", self.header_style)]
             + [Proto.color_proto(p) for p in self.prototypes]
             + [""]
         )
 
     def load_func_protos_from_file(self):
         lines = iter(get_lines_from(self.file))
-        colors.cprint("blue", f"reading: {self.filename}")
         for line in lines:
-            if Proto.func_def.match(line) and next(lines) == "{":
+            if (
+                not any(banned in line for banned in ["static", "main"])
+                and RegexRules.FUNCTION.match(line)
+                and next(lines) == "{"
+            ):
                 for incode in lines:
                     if incode == "}":
                         self.prototypes.append(f"{line};")
                         break
-
-        self.prototypes = self.align_protos_indentation()
-        self.prototypes.sort(key=len)
 
     def align_protos_indentation(self):
         def before_len(proto: str):
@@ -64,7 +68,7 @@ class Proto:
             types, name_params = proto.split("\t")
             results.append(types + "\t" * to_pad + name_params)
         # print(results)
-        return results
+        self.prototypes = results
 
     @property
     def filename(self) -> str:
@@ -73,12 +77,12 @@ class Proto:
     @staticmethod  # TODO: colors from clsmethod
     def color_proto(prototype: str):
         type, name, paramstr = re.split(r"\t+|\(", prototype[:-2])
-        result = f'{colors.cstr("red", type)} {colors.cstr("magenta", name)}('
+        result = f'{cstr("red", type)} {cstr("magenta", name)}('
         params = iter(paramstr.split())
         for p in params:
-            result += colors.cstr("red", p)
+            result += cstr("red", p)
             ptr, name = re.split(r"(^\**)", next(params))[1:]
-            result += f"{ptr} {colors.cstr('blue', name)} "
+            result += f"{ptr} {cstr('blue', name)} "
         return result[:-1] + ");"
 
 
