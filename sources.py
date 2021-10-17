@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from prototypes_container import Protos
+from protos import Protos
 from colors import cstr, cprint
+from itertools import chain
 
 
-def crawl_prototypes(src_dir: Path) -> list[Protos]:
+def _crawl_prototypes(src_dir: Path) -> list[Protos]:
     results: list[Protos] = []
     cprint("magenta", f">> from {src_dir}")
     for src in src_dir.glob("**/*.c"):
@@ -28,7 +29,7 @@ def crawl_prototypes(src_dir: Path) -> list[Protos]:
     return results
 
 
-def align_protos_indentation(protolist: list[Protos]):
+def _align_protos_indentation(protolist: list[Protos]):
     def before_len(proto):
         return len(proto.split("\t")[0])
 
@@ -54,10 +55,19 @@ def align_protos_indentation(protolist: list[Protos]):
     # self.prototypes = results
 
 
+def _protolist_to_strlist(protolist: list[Protos]) -> list[str]:
+    return [repr(s) for s in chain(protolist)]
+
+
+def get_prototypes(src_dir: Path) -> list[str]:
+    protolist = _crawl_prototypes(src_dir)
+    _align_protos_indentation(protolist)
+    return _protolist_to_strlist(protolist)
+
+
 if __name__ == "__main__":
     try:
-        results = crawl_prototypes(Path("../so_long/src"))
+        results = get_prototypes(Path("../so_long/src"))
     except ValueError as e:
-        # print(e, "\n====")
-        protolist = crawl_prototypes(Path("../so_long/lib/src"))
-        align_protos_indentation(protolist)
+        print(e, "\n====")
+        print(get_prototypes(Path("../so_long/lib/src")))

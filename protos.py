@@ -13,7 +13,6 @@ _COLOR_HEADER = "magenta"
 _COLOR_TYPE = "red"
 _COLOR_VAR = "blue"
 
-
 @dataclass
 class Protos:
     """container for c function prototypes defined inside given source code."""
@@ -23,10 +22,11 @@ class Protos:
 
     def __post_init__(self):
         self.load_func_protos_from_file()
-        assert len(self.prototypes), (
-            f"{cstr('yellow', self.file.name)} "
-            f"{cstr('red',f'never had any BSD-style C function prototypes')}"
-        )
+        if not len(self.prototypes):
+            raise ValueError(
+                f"{cstr('yellow', self.file.name)} "
+                f"{cstr('red',f'never had any BSD-style C function prototypes')}"
+            )
         # self.align_protos_indentation()
         # self.prototypes.sort(key=len)
 
@@ -55,6 +55,7 @@ class Protos:
             + [Protos.colored_prototype(p) for p in self.prototypes]
             + [""]
         )
+
     def __getitem__(self, item):
         return self.prototypes[item]
 
