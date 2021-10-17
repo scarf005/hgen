@@ -55,6 +55,8 @@ class Protos:
             + [Protos.colored_prototype(p) for p in self.prototypes]
             + [""]
         )
+    def __getitem__(self, item):
+        return self.prototypes[item]
 
     @cached_property
     def header(self):
