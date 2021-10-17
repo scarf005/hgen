@@ -6,7 +6,7 @@
 #    By: youkim < youkim@student.42seoul.kr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 11:05:46 by youkim            #+#    #+#              #
-#    Updated: 2021/10/13 11:14:29 by youkim           ###   ########.fr        #
+#    Updated: 2021/10/17 12:25:17 by youkim           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,8 +22,8 @@ class RegexRules:
 
     @staticmethod
     def _make_flagged_comment_regex(which):
-        COMMENT_BEGIN = r"[/][/*] *={{5,}} *"
-        COMMENT_END = r" *={{5,}}"
+        COMMENT_BEGIN = r"[/][/*] *={5,} *"
+        COMMENT_END = r" *={5,}"
         return compile(fr"{COMMENT_BEGIN}{which}{COMMENT_END}", IGNORECASE)
 
     FUNCTION = compile(r"\b(?P<type>(\w* ?)+)\t(?P<name>\w*)(?P<param>\(.*\))")
