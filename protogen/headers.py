@@ -1,6 +1,6 @@
 from pathlib import Path
-from utils import get_lines_from, cstr
-from regexrules import RegexRules
+from protogen.utils import get_lines_from, cstr
+from .regexrules import RegexRules
 
 def get_flag_span(lines: list[str]) -> tuple[int, int]:
     begin = None

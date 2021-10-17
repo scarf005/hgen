@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from protos import Protos
-from utils import cstr, cprint
+from .protos import Protos
+from protogen.utils import cstr, cprint
 from itertools import chain
 
 

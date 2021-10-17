@@ -3,8 +3,8 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 import re
-from utils import get_lines_from, cstr
-from regexrules import RegexRules
+from protogen.utils import get_lines_from, cstr
+from .regexrules import RegexRules
 from functools import cached_property
 
 _NAME_HEADER = "// < {filename} >"

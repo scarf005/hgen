@@ -13,13 +13,17 @@ def update_header_prototypes(dest_path: Path, src_path: Path):
         dest_path (Path): path to search for headers recursively
         src_path (Path): path to search for prototypes recursively
     """
-    prototypes = get_prototypes(src_path)
-    insert_prototypes(dest_path, protos=prototypes)
+    try:
+        prototypes = get_prototypes(src_path)
+        insert_prototypes(dest_path, protos=prototypes)
+    except ValueError as e:
+        print(e)
 
 
-def main(dest_path=Path("includes"), src_path=Path("src"), common=None):
+def main(common=None, dest_path=Path("includes"), src_path=Path("src")):
     if common:
         dest_path, src_path = Path(common) / dest_path, Path(common) / src_path
+    print(f"{src_path} -> {dest_path}")
     update_header_prototypes(dest_path, src_path)
 
 
