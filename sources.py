@@ -6,10 +6,10 @@ from colors import cstr, cprint
 from itertools import chain
 
 
-def _crawl_prototypes(src_dir: Path) -> list[Protos]:
+def _crawl_prototypes(src_path: Path) -> list[Protos]:
     results: list[Protos] = []
-    cprint("magenta", f">> from {src_dir}")
-    for src in src_dir.glob("**/*.c"):
+    cprint("magenta", f">> from {src_path}")
+    for src in src_path.glob("**/*.c"):
         status, res = "green", ""
         try:
             target = Protos(src)
@@ -23,7 +23,7 @@ def _crawl_prototypes(src_dir: Path) -> list[Protos]:
         raise ValueError(
             cstr(
                 "red",
-                f"no function prototypes found in {src_dir}",
+                f"no function prototypes found in {src_path}",
             )
         )
     return results
@@ -59,8 +59,8 @@ def _protolist_to_strlist(protolist: list[Protos]) -> list[str]:
     return [repr(s) for s in chain(protolist)]
 
 
-def get_prototypes(src_dir: Path) -> list[str]:
-    protolist = _crawl_prototypes(src_dir)
+def get_prototypes(src_path: Path) -> list[str]:
+    protolist = _crawl_prototypes(src_path)
     _align_protos_indentation(protolist)
     return _protolist_to_strlist(protolist)
 
