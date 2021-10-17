@@ -3,8 +3,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 import re
-from colors import cprint, cstr
-from utils import get_lines_from
+from utils import get_lines_from, cstr
 from regexrules import RegexRules
 from functools import cached_property
 

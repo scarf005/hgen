@@ -2,9 +2,8 @@
 
 from pathlib import Path
 from sys import argv
+from protogen import get_prototypes, insert_prototypes
 
-from sources import get_prototypes
-from headers import insert_prototypes
 
 
 def update_header_prototypes(dest_path: Path, src_path: Path):

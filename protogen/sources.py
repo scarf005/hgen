@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from protos import Protos
-from colors import cstr, cprint
+from utils import cstr, cprint
 from itertools import chain
 
 

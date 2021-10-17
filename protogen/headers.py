@@ -1,8 +1,6 @@
 from pathlib import Path
-from utils import get_lines_from
+from utils import get_lines_from, cstr
 from regexrules import RegexRules
-from colors import cstr
-
 
 def get_flag_span(lines: list[str]) -> tuple[int, int]:
     begin = None
