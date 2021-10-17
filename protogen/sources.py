@@ -15,7 +15,7 @@ def _crawl_prototypes(src_path: Path) -> list[Protos]:
             target = Protos(src)
             results.append(target)
             res = f"(x{len(target)})"
-        except AssertionError:
+        except ValueError:
             status, res = "yellow", "none"
         finally:
             print(f"{cstr(status, f'{res} in')} {cstr('blue', src.name)}")
