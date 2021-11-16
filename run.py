@@ -20,10 +20,11 @@ def update_header_prototypes(dest_path: Path, src_path: Path):
         print(e)
 
 
-def main(common=None, dest_path=Path("includes"), src_path=Path("src")):
+def main(common="", dest="includes", src="src"):
+    src_path, dest_path = Path(src), Path(dest)
     if common:
         dest_path, src_path = Path(common) / dest_path, Path(common) / src_path
-    print(f"{src_path} -> {dest_path}")
+    print(f"{src_path.resolve()} -> {dest_path.resolve()}")
     update_header_prototypes(dest_path, src_path)
 
 
