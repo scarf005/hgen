@@ -18,24 +18,23 @@ def get_flag_span(lines: list[str]) -> tuple[int, int]:
 def cut_lines_by_flag_span(lines: list[str], span: tuple[int, int]):
     return lines[: span[0] + 1], lines[span[1] :]
 
+def try_insert(dest: Path, protos: list[str]) -> bool:
+    lines = get_lines_from(dest)
+    try:
+        before, after = cut_lines_by_flag_span(lines, get_flag_span(lines))
+        dest.write_text("\n".join(before + protos + after))
+        return True
+        # break
+    except SyntaxError:
+        return False
 
 def insert_prototypes(dest_path: Path, *, protos: list[str]) -> None:
-    def try_insert(dest):
-        lines = get_lines_from(dest)
-        try:
-            before, after = cut_lines_by_flag_span(lines, get_flag_span(lines))
-            dest.write_text("\n".join(before + protos + after))
-            return True
-            # break
-        except SyntaxError:
-            return False
-
     if dest_path.is_file:
-        try_insert(dest_path)
+        try_insert(dest_path, protos)
         return
 
     for dest in dest_path.glob("**/*.h"):
-        oper_ok = try_insert(dest)
+        oper_ok = try_insert(dest, protos)
         if not oper_ok:
             break
     else:
