@@ -1,6 +1,9 @@
 from pathlib import Path
-from protogen.utils import get_lines_from, cstr
+
+from protogen.utils import cprint, cstr, get_lines_from
+
 from .regexrules import RegexRules
+
 
 def get_flag_span(lines: list[str]) -> tuple[int, int]:
     begin = None
@@ -17,17 +20,27 @@ def cut_lines_by_flag_span(lines: list[str], span: tuple[int, int]):
 
 
 def insert_prototypes(dest_path: Path, *, protos: list[str]) -> None:
-    for dest in dest_path.glob("**/*.h"):
+    def try_insert(dest):
         lines = get_lines_from(dest)
         try:
             before, after = cut_lines_by_flag_span(lines, get_flag_span(lines))
             dest.write_text("\n".join(before + protos + after))
-            break
+            return True
+            # break
         except SyntaxError:
-            pass
+            return False
+
+    if dest_path.is_file:
+        try_insert(dest_path)
+        return
+
+    for dest in dest_path.glob("**/*.h"):
+        oper_ok = try_insert(dest)
+        if not oper_ok:
+            break
     else:
         raise NotImplementedError(
-            "could not find either header or function definition flags\n"
+            "could not find neither header or function definition flags\n"
             f"a header in given directory should contain {RegexRules.FLAG_BEGIN}",
         )
 
