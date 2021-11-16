@@ -5,7 +5,6 @@ from sys import argv
 from protogen import get_prototypes, insert_prototypes
 
 
-
 def update_header_prototypes(dest_path: Path, src_path: Path):
     """find and update c function prototypes with comment flags.
 
@@ -21,9 +20,11 @@ def update_header_prototypes(dest_path: Path, src_path: Path):
 
 
 def main(common="", dest="includes", src="src"):
-    src_path, dest_path = Path(src), Path(dest)
     if common:
-        dest_path, src_path = Path(common) / dest_path, Path(common) / src_path
+        dest_path, src_path = Path(common) / dest, Path(common) / src
+    else:
+        dest_path, src_path = Path(dest), Path(src)
+
     print(f"{src_path.resolve()} -> {dest_path.resolve()}")
     update_header_prototypes(dest_path, src_path)
 
