@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
-from dataclasses import dataclass, field
-from pathlib import Path
 import re
-from protogen.utils import get_lines_from, cstr
-from .regexrules import RegexRules
+from dataclasses import dataclass, field
 from functools import cached_property
+from pathlib import Path
+
+from protogen.utils import cstr, get_lines_from
+
+from .regexrules import RegexRules
 
 _NAME_HEADER = "// < {filename} >"
 _COLOR_HEADER = "magenta"
 _COLOR_TYPE = "red"
 _COLOR_VAR = "blue"
+
 
 @dataclass
 class Protos:
@@ -46,7 +49,7 @@ class Protos:
         return len(self.prototypes)
 
     def __repr__(self) -> str:
-        return "\n".join([self.header, *self.prototypes, ""])
+        return "\n".join([self.header, "", *self.prototypes, ""])
 
     def __str__(self) -> str:
         return "\n".join(
