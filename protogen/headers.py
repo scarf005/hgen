@@ -18,6 +18,7 @@ def get_flag_span(lines: list[str]) -> tuple[int, int]:
 def cut_lines_by_flag_span(lines: list[str], span: tuple[int, int]):
     return lines[: span[0] + 1], lines[span[1] :]
 
+
 def try_insert(dest: Path, protos: list[str]) -> bool:
     lines = get_lines_from(dest)
     try:
@@ -28,8 +29,9 @@ def try_insert(dest: Path, protos: list[str]) -> bool:
     except SyntaxError:
         return False
 
+
 def insert_prototypes(dest_path: Path, *, protos: list[str]) -> None:
-    if dest_path.is_file:
+    if not dest_path.is_dir:
         try_insert(dest_path, protos)
         return
 
