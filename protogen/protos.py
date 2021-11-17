@@ -9,7 +9,7 @@ from protogen.utils import cstr, get_lines_from
 
 from .regexrules import RegexRules
 
-_NAME_HEADER = "// < {filename} >"
+_NAME_HEADER = "/* < {filename} >\n*/"
 _COLOR_HEADER = "magenta"
 _COLOR_TYPE = "red"
 _COLOR_VAR = "blue"
@@ -49,7 +49,7 @@ class Protos:
         return len(self.prototypes)
 
     def __repr__(self) -> str:
-        return "\n".join([self.header, "", *self.prototypes, ""])
+        return "\n".join([self.header, "", *self.prototypes])
 
     def __str__(self) -> str:
         return "\n".join(
