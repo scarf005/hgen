@@ -49,10 +49,8 @@ def _align_protos_indentation(protolist: list[Protos]):
             to_pad = longest // 4 - before_len(proto) // 4 + 1
             types, name_params = proto.split("\t")
             results.append(types + "\t" * to_pad + name_params)
-            container.prototypes = results
-            # print(repr(container).replace("\t", r"<==>"))
 
-    # self.prototypes = results
+        container.prototypes = results
 
 
 def _protolist_to_strlist(protolist: list[Protos]) -> list[str]:
