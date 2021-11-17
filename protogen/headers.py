@@ -31,18 +31,20 @@ def try_insert(dest: Path, protos: list[str]) -> bool:
 
 
 def insert_prototypes(dest_path: Path, *, protos: list[str]) -> None:
-    if not dest_path.is_dir:
+    if not dest_path.is_dir():
         try_insert(dest_path, protos)
         return
 
     for dest in dest_path.glob("**/*.h"):
         oper_ok = try_insert(dest, protos)
-        if not oper_ok:
+        if oper_ok:
             break
     else:
         raise NotImplementedError(
-            "could not find neither header or function definition flags\n"
-            f"a header in given directory should contain {RegexRules.FLAG_BEGIN}",
+            f"searched {dest_path.absolute()} but could not find "
+            "neither header or function definition flags.\n"
+            "a header in given directory should contain "
+            f"{RegexRules.FLAG_BEGIN}"
         )
 
 
