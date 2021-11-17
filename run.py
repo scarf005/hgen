@@ -2,7 +2,9 @@
 
 from pathlib import Path
 from sys import argv
+
 from protogen import get_prototypes, insert_prototypes
+from protogen.utils import cprint, cstr
 
 
 def update_header_prototypes(dest_path: Path, src_path: Path):
@@ -19,13 +21,25 @@ def update_header_prototypes(dest_path: Path, src_path: Path):
         print(e)
 
 
+def visualize(dest_path: Path, src_path: Path):
+    cols = {"d": "", "s": ""}
+    for n, path in (("d", dest_path), ("s", src_path)):
+        p = path.resolve()
+        cols[n] += (
+            cstr("cyan", f"{p.parent.parent}/")
+            + cstr("yellow", f"{p.parent.name}/")
+            + cstr("red", p.name)
+        )
+    print(f"{cols['s']} -> {cols['d']}")
+
+
 def main(common="", dest="includes", src="src"):
     if common:
         dest_path, src_path = Path(common) / dest, Path(common) / src
     else:
         dest_path, src_path = Path(dest), Path(src)
 
-    print(f"{src_path.resolve()} -> {dest_path.resolve()}")
+    visualize(dest_path, src_path)
     update_header_prototypes(dest_path, src_path)
 
 
