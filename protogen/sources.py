@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
-from .protos import Protos
-from protogen.utils import cstr, cprint
 from itertools import chain
+from pathlib import Path
+
+from protogen.utils import cprint, cstr
+
+from .protos import Protos
 
 
-def _crawl_prototypes(src_path: Path) -> list[Protos]:
+def _crawl_prototypes(src_path: Path) -> "list[Protos]":
     results: list[Protos] = []
     cprint("magenta", f">> from {src_path}")
     for src in src_path.glob("**/*.c"):
@@ -29,7 +31,7 @@ def _crawl_prototypes(src_path: Path) -> list[Protos]:
     return results
 
 
-def _align_protos_indentation(protolist: list[Protos]):
+def _align_protos_indentation(protolist: "list[Protos]"):
     def before_len(proto):
         return len(proto.split("\t")[0])
 
@@ -53,11 +55,11 @@ def _align_protos_indentation(protolist: list[Protos]):
         container.prototypes = results
 
 
-def _protolist_to_strlist(protolist: list[Protos]) -> list[str]:
+def _protolist_to_strlist(protolist: "list[Protos]") -> "list[str]":
     return [repr(s) for s in chain(protolist)]
 
 
-def get_prototypes(src_path: Path) -> list[str]:
+def get_prototypes(src_path: Path) -> "list[str]":
     protolist = _crawl_prototypes(src_path)
     _align_protos_indentation(protolist)
     return _protolist_to_strlist(protolist)

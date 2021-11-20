@@ -5,7 +5,7 @@ from protogen.utils import cprint, cstr, get_lines_from
 from .regexrules import RegexRules
 
 
-def get_flag_span(lines: list[str]) -> tuple[int, int]:
+def get_flag_span(lines: "list[str]") -> "tuple[int, int]":
     begin = None
     for i, line in enumerate(lines):
         if RegexRules.FLAG_BEGIN.match(line):
@@ -15,11 +15,11 @@ def get_flag_span(lines: list[str]) -> tuple[int, int]:
     raise SyntaxError(cstr("red", "function flag header was never found"))
 
 
-def cut_lines_by_flag_span(lines: list[str], span: tuple[int, int]):
+def cut_lines_by_flag_span(lines: "list[str]", span: "tuple[int, int]"):
     return lines[: span[0] + 1], lines[span[1] :]
 
 
-def try_insert(dest: Path, protos: list[str]) -> bool:
+def try_insert(dest: Path, protos: "list[str]") -> bool:
     lines = get_lines_from(dest)
     try:
         before, after = cut_lines_by_flag_span(lines, get_flag_span(lines))
@@ -30,7 +30,7 @@ def try_insert(dest: Path, protos: list[str]) -> bool:
         return False
 
 
-def insert_prototypes(dest_path: Path, *, protos: list[str]) -> None:
+def insert_prototypes(dest_path: Path, *, protos: "list[str]") -> None:
     if not dest_path.is_dir():
         try_insert(dest_path, protos)
         return

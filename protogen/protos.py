@@ -9,7 +9,7 @@ from protogen.utils import cstr, get_lines_from
 
 from .regexrules import RegexRules
 
-_NAME_HEADER = "/* < {filename} >\n*/"
+_NAME_HEADER = "/*\n** < {filename} > */"
 _COLOR_HEADER = "magenta"
 _COLOR_TYPE = "red"
 _COLOR_VAR = "blue"
@@ -20,7 +20,7 @@ class Protos:
     """container for c function prototypes defined inside given source code."""
 
     file: Path
-    prototypes: list[str] = field(default_factory=list)
+    prototypes: 'list[str]' = field(default_factory=list)
 
     def __post_init__(self):
         self.load_func_protos_from_file()

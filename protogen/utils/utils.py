@@ -3,5 +3,5 @@
 from pathlib import Path
 
 
-def get_lines_from(file: Path) -> list[str]:
+def get_lines_from(file: Path) -> 'list[str]':
     return file.read_text().splitlines(keepends=False)
