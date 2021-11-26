@@ -6,7 +6,7 @@
 #    By: youkim < youkim@student.42seoul.kr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/10/13 11:05:46 by youkim            #+#    #+#              #
-#    Updated: 2021/11/20 14:35:46 by youkim           ###   ########.fr        #
+#    Updated: 2021/11/26 13:07:23 by youkim           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,10 +16,12 @@ from functools import cached_property
 from re import IGNORECASE, compile
 from typing import Pattern
 
+
 def _make_flagged_comment_regex(which):
-    COMMENT_BEGIN = r"[/][/*] *={5,} *"
+    COMMENT_BEGIN = r"[/][/*][\t ]*={5,} *"
     COMMENT_END = r" *={5,}"
     return compile(fr"{COMMENT_BEGIN}{which}{COMMENT_END}", IGNORECASE)
+
 
 class RegexRules:
     """Regex Rules to parse *.c and *.h files."""
