@@ -26,7 +26,7 @@ def visualize(dest_path: Path, src_path: Path):
     for n, path in (("d", dest_path), ("s", src_path)):
         p = path.resolve()
         cols[n] += (
-            cstr("cyan", f"{p.parent.parent}/")
+            cstr("cyan", f"{p.parent.parent.name}/")
             + cstr("yellow", f"{p.parent.name}/")
             + cstr("red", p.name)
         )
