@@ -1,10 +1,10 @@
-# Protogen
+# hgen
 
 ## what is this
 
-protogen is an python package that injects c function prototypes into header.
+hgen is an python package that injects c function prototypes into header.
 
-currently protogen supports BSD-style prototypes.
+currently hgen supports BSD-style prototypes.
 
 ## how to use
 
@@ -17,5 +17,5 @@ currently protogen supports BSD-style prototypes.
 ```
 
 ```
-// ===== 
+// =====
 ```

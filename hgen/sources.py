@@ -3,7 +3,7 @@
 from itertools import chain
 from pathlib import Path
 
-from protogen.utils import cprint, cstr
+from hgen.utils import cprint, cstr
 
 from .protos import Protos
 

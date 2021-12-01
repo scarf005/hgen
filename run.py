@@ -3,8 +3,8 @@
 from pathlib import Path
 from sys import argv
 
-from protogen import get_prototypes, insert_prototypes
-from protogen.utils import cprint, cstr
+from hgen import get_prototypes, insert_prototypes
+from hgen.utils import cprint, cstr
 
 
 def update_header_prototypes(dest_path: Path, src_path: Path):
