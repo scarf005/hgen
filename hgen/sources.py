@@ -31,6 +31,8 @@ def _crawl_prototypes(src_path: Path) -> "list[Protos]":
     return results
 
 
+# this is the dirtiest loop i've ever laid my hands on.
+# but it works.
 def _align_protos_indentation(protolist: "list[Protos]"):
     def before_len(proto):
         return len(proto.split("\t")[0])
@@ -48,17 +50,37 @@ def _align_protos_indentation(protolist: "list[Protos]"):
     for container in protolist:
         results = []
         for proto in container:
-            to_pad = longest // 4 - before_len(proto) // 4 + 1
-            types, name_params = proto.split("\t")
+            types, funcname_params = proto.split("\t")
+            funcname, param = funcname_params.split("(")
+            params = param.split(", ")
 
-            if len(types + name_params) + to_pad * 4 > 79:
-                funcname, param = name_params.split("(")
-                firstline_len = (len(types) // 4 + to_pad) * 4
-                nl_tabs = "\t" * (1 + len(types) // 4 + to_pad)
-                # print(firstline_len, types + to_pad * "\t" + ":" + funcname)
-                name_params = f"{funcname}(\n{nl_tabs}{param}"
+            to_pad = longest // 4 - before_len(proto) // 4
+            # firstline_len = (len(types) // 4 + to_pad) * 4
+            nl_tabs = "\t" * (1 + len(types) // 4 + to_pad)
 
-            results.append(types + "\t" * to_pad + name_params)
+            TAB = "\t"
+            result = [f"{types}{TAB * to_pad}{funcname}("]
+            i = 0
+            while True:
+                is_first = True
+                while (
+                    len(params)
+                    and len(result[i].replace("\t", "....") + params[0]) < 79
+                ):
+                    if is_first:
+                        is_first = False
+                    else:
+                        result[i] += " "
+                    result[i] += params.pop(0)
+                    if len(params):
+                        result[i] += ","
+                i += 1
+                if len(params):
+                    result.append(nl_tabs)
+                else:
+                    break
+
+            results.append("\n".join(result))
 
         container.prototypes = results
 
