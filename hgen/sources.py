@@ -50,6 +50,14 @@ def _align_protos_indentation(protolist: "list[Protos]"):
         for proto in container:
             to_pad = longest // 4 - before_len(proto) // 4 + 1
             types, name_params = proto.split("\t")
+
+            if len(types + name_params) + to_pad * 4 > 79:
+                funcname, param = name_params.split("(")
+                firstline_len = (len(types) // 4 + to_pad) * 4
+                nl_tabs = "\t" * (1 + len(types) // 4 + to_pad)
+                # print(firstline_len, types + to_pad * "\t" + ":" + funcname)
+                name_params = f"{funcname}(\n{nl_tabs}{param}"
+
             results.append(types + "\t" * to_pad + name_params)
 
         container.prototypes = results
