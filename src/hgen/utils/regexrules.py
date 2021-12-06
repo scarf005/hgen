@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
-from functools import cached_property
 from re import IGNORECASE, compile
-from typing import Pattern
 
 
 def _make_flagged_comment_regex(which):
-    COMMENT_BEGIN = r"[/][/*][\t ]*={5,} *"
-    COMMENT_END = r" *={5,}"
-    return compile(fr"{COMMENT_BEGIN}{which}{COMMENT_END}", IGNORECASE)
+    COMMENT_BEGIN = r"[/][/*].*"
+    return compile(fr"{COMMENT_BEGIN}{which}", IGNORECASE)
 
 
 class RegexRules:
@@ -17,10 +14,11 @@ class RegexRules:
     FUNCTION = compile(
         r"\b(?P<type>(\w* ?)+)\t(?P<name>[\w\*]*)(?P<param>\(.*\))"
     )
-    FLAG_BEGIN = _make_flagged_comment_regex(r"@functions?")
+    FLAG_BEGIN = _make_flagged_comment_regex(r"@(func|functions?)\b")
     FLAG_END = [
         compile("#endif"),
-        _make_flagged_comment_regex(r".*"),
+        _make_flagged_comment_regex(r"=+.*=+"),
+        _make_flagged_comment_regex(r"@end"),
     ]
 
 

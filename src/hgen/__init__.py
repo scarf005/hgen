@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from sys import argv
+from sys import argv, stderr
 
 from hgen.injector import insert_prototypes
 from hgen.proto import get_prototypes
-from hgen.utils import cstr, visualize
+from hgen.utils import create_parser, visualize
 
 
 def update_header_prototypes(dest_path: Path, src_path: Path):
@@ -23,11 +23,16 @@ def update_header_prototypes(dest_path: Path, src_path: Path):
 
 
 def main():
-    args = argv[1:]
-    if len(args) != 3:
-        print("Usage: hgen <common_path> <dest_path> <src_path>")
-    common = Path(args[0])
-    dest_path, src_path = common / args[1], common / args[2]
+    parser = create_parser()
+    if len(argv) == 1:
+        parser.print_usage(stderr)
+        exit()
 
-    visualize(dest_path, src_path)
-    update_header_prototypes(dest_path, src_path)
+    args = parser.parse_args()
+
+    dest_path = args.common / args.includes
+
+    for src in args.sources:
+        src_path = args.common / src
+        visualize(dest_path, src_path)
+        update_header_prototypes(dest_path, src_path)

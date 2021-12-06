@@ -8,26 +8,39 @@ from hgen.utils import cprint, cstr
 
 
 def _crawl_prototypes(src_path: Path) -> "list[Protos]":
-    results: list[Protos] = []
-    cprint("magenta", f">> from {src_path}")
-    for src in src_path.glob("**/*.c"):
+    def crawl_file(src: Path):
         status, res = "green", ""
         try:
             target = Protos(src)
-            results.append(target)
             res = f"(x{len(target)})"
+            # return target
+            results.append(target)
         except ValueError:
             status, res = "yellow", "none"
         finally:
             print(f"{cstr(status, f'{res} in')} {cstr('blue', src.name)}")
-    if not len(results):
-        raise ValueError(
-            cstr(
-                "red",
-                f"no function prototypes found in {src_path}",
+
+    def checked(results: "list[Protos]"):
+        if not len(results):
+            raise ValueError(
+                cstr(
+                    "red",
+                    f"no function prototypes found in {src_path}",
+                )
             )
-        )
-    return results
+        return results
+
+    results: list[Protos] = []
+    cprint("magenta", f">> from {src_path}")
+
+    if not src_path.is_dir():
+        crawl_file(src_path)
+        return checked(results)
+
+    for src in src_path.glob("*.c"):
+        crawl_file(src)
+
+    return checked(results)
 
 
 # this is the dirtiest loop i've ever laid my hands on.

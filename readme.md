@@ -4,19 +4,36 @@
 
 Injects c function prototypes(BSD-style) into header.
 
+limitations
+- cannot capture multi-line function prototypes
+- cannot capture K&R style definitions
+- breaks when function does not work with norminette
 ## Usage
 
-`hgen [common path] [header path] [src path]`
+`hgen [-h] -I header.h src.c [src.c ...] [-c path]`
 
+your header should have flags that...
+begins with: `@func` or `@function(s)` at your comment
+ends with: `#endif` or `@end` or multiple `=` (ex:`== some identifier ==`)
+
+### examples
+
+```c
+//	@func
+//	@end
 ```
-// ===== @functions =====
 
-#endif or flagged comment (// ===== .* =====)
+```c
+#ifndef HEAD_H
+# define HEAD_H
+
+//	===== @functions =====
+#endif
 ```
 
 ## Plans
 
-- [ ] refactors
-- [ ] json based configuration
-- [ ] support K&R style function definitions
-- [ ] support multiline function definitions
+- refactors
+- json based configuration
+- support K&R style function definitions
+- support multiline function definitions
