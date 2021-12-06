@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+from sys import argv
 
 from hgen.injector import insert_prototypes
 from hgen.proto import get_prototypes
-from hgen.utils import cstr
-
-# from sys import argv
+from hgen.utils import cstr, visualize
 
 
 def update_header_prototypes(dest_path: Path, src_path: Path):
@@ -23,23 +22,12 @@ def update_header_prototypes(dest_path: Path, src_path: Path):
         print(e)
 
 
-def visualize(dest_path: Path, src_path: Path):
-    cols = {"d": "", "s": ""}
-    for n, path in (("d", dest_path), ("s", src_path)):
-        p = path.resolve()
-        cols[n] += (
-            cstr("cyan", f"{p.parent.parent.name}/")
-            + cstr("yellow", f"{p.parent.name}/")
-            + cstr("red", p.name)
-        )
-    print(f"{cols['s']} -> {cols['d']}")
-
-
-def main(common="", dest="includes", src="src"):
-    if common:
-        dest_path, src_path = Path(common) / dest, Path(common) / src
-    else:
-        dest_path, src_path = Path(dest), Path(src)
+def main():
+    args = argv[1:]
+    if len(args) != 3:
+        print("Usage: hgen <common_path> <dest_path> <src_path>")
+    common = Path(args[0])
+    dest_path, src_path = common / args[1], common / args[2]
 
     visualize(dest_path, src_path)
     update_header_prototypes(dest_path, src_path)
