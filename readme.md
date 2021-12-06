@@ -1,5 +1,6 @@
 # hgen
 
+[한글로 읽기](README.ko.md)
 ## what is this
 
 hgen is an python package that injects c function prototypes into header.

@@ -3,9 +3,8 @@
 from itertools import chain
 from pathlib import Path
 
-from hgen.utils import cprint, cstr
-
 from .protos import Protos
+from .utils import cprint, cstr
 
 
 def _crawl_prototypes(src_path: Path) -> "list[Protos]":
@@ -55,7 +54,6 @@ def _align_protos_indentation(protolist: "list[Protos]"):
             params = param.split(", ")
 
             to_pad = longest // 4 - before_len(proto) // 4
-            # firstline_len = (len(types) // 4 + to_pad) * 4
             nl_tabs = "\t" * (1 + len(types) // 4 + to_pad)
 
             TAB = "\t"

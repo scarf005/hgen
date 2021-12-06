@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from hgen.utils import cprint, cstr, get_lines_from
+from .utils import cprint, cstr, get_lines_from
 
 from .regexrules import RegexRules
 
