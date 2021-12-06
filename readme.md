@@ -2,6 +2,8 @@
 
 ## Introduction
 
+![showcase](https://user-images.githubusercontent.com/83401142/144825570-210f51ed-ddfc-4a14-b84a-10db1aac8563.gif)
+
 Injects c function prototypes(BSD-style) into header.
 
 limitations
