@@ -5,9 +5,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from pathlib import Path
 
-from .utils import cstr, get_lines_from
-
-from .regexrules import RegexRules
+from hgen.utils import RegexRules, cstr, get_lines_from
 
 _NAME_HEADER = "/*\n** < {filename} > */"
 _COLOR_HEADER = "magenta"
@@ -20,7 +18,7 @@ class Protos:
     """container for c function prototypes defined inside given source code."""
 
     file: Path
-    prototypes: 'list[str]' = field(default_factory=list)
+    prototypes: "list[str]" = field(default_factory=list)
 
     def __post_init__(self):
         self.load_func_protos_from_file()

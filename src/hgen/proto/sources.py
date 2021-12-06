@@ -3,8 +3,8 @@
 from itertools import chain
 from pathlib import Path
 
-from .protos import Protos
-from .utils import cprint, cstr
+from hgen.proto import Protos
+from hgen.utils import cprint, cstr
 
 
 def _crawl_prototypes(src_path: Path) -> "list[Protos]":

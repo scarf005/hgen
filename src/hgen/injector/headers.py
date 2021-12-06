@@ -1,8 +1,6 @@
 from pathlib import Path
 
-from .utils import cprint, cstr, get_lines_from
-
-from .regexrules import RegexRules
+from hgen.utils import RegexRules, cprint, cstr, get_lines_from
 
 
 def get_flag_span(lines: "list[str]") -> "tuple[int, int]":
@@ -53,12 +51,3 @@ def insert_prototypes(dest_path: Path, *, protos: "list[str]") -> None:
             break
     else:
         headererror()
-
-
-if __name__ == "__main__":
-    from sources import get_prototypes
-
-    insert_prototypes(
-        Path("../so_long/includes"),
-        protos=get_prototypes(Path("../so_long/lib/src")),
-    )

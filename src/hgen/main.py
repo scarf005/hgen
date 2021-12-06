@@ -2,8 +2,9 @@
 
 from pathlib import Path
 
-from . import get_prototypes, insert_prototypes
-from .utils import cprint, cstr
+from hgen.injector import insert_prototypes
+from hgen.proto import get_prototypes
+from hgen.utils import cstr
 
 # from sys import argv
 
