@@ -8,7 +8,7 @@ def create_parser():
     prog = "hgen"
     parser = ArgumentParser(
         prog=prog,
-        usage=f"{prog} [-h] -I header.h src.c [src.c ...] [-c path]",
+        usage=f"{prog} [-h] -I header.h src [src ...] [-c path]",
         description=cstr("green", "HGEN: Header prototype GENerator"),
     )
     parser.add_argument(
@@ -16,7 +16,10 @@ def create_parser():
         nargs="+",
         type=Path,
         default=Path(".") / "src",
-        help="list of source files to search for prototypes",
+        help=(
+            "list of source files to search for prototypes. "
+            "either directory or file works"
+        ),
         metavar="",
     )
     parser.add_argument(

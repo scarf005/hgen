@@ -14,9 +14,10 @@ limitations
 
 `hgen [-h] -I header.h src.c [src.c ...] [-c path]`
 
-your header should have flags that...
-begins with: `@func` or `@function(s)` at your comment
-ends with: `#endif` or `@end` or multiple `=` (ex:`== some identifier ==`)
+your header should have flags that
+
+- begins with: `@func` or `@function(s)` at your comment
+- ends with: `#endif` or `@end` or multiple `=` (ex:`== some identifier ==`)
 
 ### examples
 
