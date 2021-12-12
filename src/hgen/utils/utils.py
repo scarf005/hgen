@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from . import cstr
+from hgen.utils.colors import cstr
 
 TAB = "\t"
 
