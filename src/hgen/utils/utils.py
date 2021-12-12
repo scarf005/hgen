@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+
 from . import cstr
 
-def get_lines_from(file: Path) -> 'list[str]':
+TAB = "\t"
+
+
+def get_lines_from(file: Path) -> "list[str]":
     return file.read_text().splitlines(keepends=False)
+
 
 def visualize(dest_path: Path, src_path: Path):
     cols = {"d": "", "s": ""}
