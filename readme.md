@@ -12,7 +12,7 @@ limitations
 - breaks when function does not work with norminette
 ## Usage
 
-`hgen [-h] -I header.h src.c [src.c ...] [-c path]`
+`hgen [-h] -I header.h src.c [src/ ...] [-c path]`
 
 your header should have flags that
 
