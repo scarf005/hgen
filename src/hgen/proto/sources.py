@@ -66,7 +66,7 @@ def _align_protos_indentation(protolist: "list[Protos]"):
         nl_tabs = TAB * (1 + len(types) // 4 + to_pad)
 
         result = [f"{types}{TAB * to_pad}{funcname}("]
-        print(result)
+        # print(result)
         i = 0
         while True:
             is_first = True
@@ -91,7 +91,7 @@ def _align_protos_indentation(protolist: "list[Protos]"):
     longest = get_longest_prototype_len()
 
     for container in protolist:
-        print(container)
+        # print(container)
         results = []
         for proto in container:
             result = in_loop()
