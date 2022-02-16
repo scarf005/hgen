@@ -1,10 +1,32 @@
 #!/bin/bash
 
-rm dist/*
+VER=$1
 
-python3 semver.py Minor
+cleanup() {
+  rm dist/*
+}
 
-python3 -m build
-python3 -m twine upload dist/*
-python3 -m twine upload --repository testpypi dist/*
-pip3 install --upgrade hgen
+setup_semver () {
+  VER=$1
+  python3 semver.py $VER
+}
+
+build () {
+  python3 -m build
+}
+
+upload () {
+  python3 -m twine upload dist/*
+  python3 -m twine upload --repository testpypi dist/*
+}
+
+refresh () {
+  pip3 install --upgrade hgen
+  asdf reshim
+}
+
+cleanup
+setup_semver $VER
+build
+upload
+refresh

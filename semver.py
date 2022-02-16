@@ -2,6 +2,8 @@ from configparser import ConfigParser
 from enum import IntEnum
 from sys import argv
 
+from termcolor import cprint
+
 
 class Version(IntEnum):
     Major = 0
@@ -22,6 +24,6 @@ if __name__ == "__main__":
     file = ConfigParser()
     file.read("setup.cfg")
     new_ver = version_up(file, to_update)
-    print(new_ver)
+    cprint(new_ver, "green")
     file.set("metadata", "version", new_ver)
     file.write(open("setup.cfg", "w"))
