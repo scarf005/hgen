@@ -37,7 +37,7 @@ def _crawl_prototypes(src_path: Path) -> "list[Protos]":
         crawl_file(src_path)
         return checked(results)
 
-    for src in src_path.glob("*.c"):
+    for src in sorted(src_path.glob("*.c")):
         crawl_file(src)
 
     return checked(results)
