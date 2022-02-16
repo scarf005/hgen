@@ -12,7 +12,7 @@ class RegexRules:
     """Regex Rules to parse *.c and *.h files."""
 
     FUNCTION = compile(
-        r"\b(?P<type>(\w* ?)+)\t(?P<name>[\w\*]*)(?P<param>\(.*\))"
+        r"\b(?P<type>(\w*[ \t]*)+)[ \t](?P<name>[\w\*]*)(?P<param>\(.*\))"
     )
     FLAG_BEGIN = _make_flagged_comment_regex(r"@(func|functions?)\b")
     FLAG_END = [
