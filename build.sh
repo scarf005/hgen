@@ -21,11 +21,13 @@ upload () {
 }
 
 refresh () {
+  sleep 1
   pip3 install --upgrade hgen
   asdf reshim
 }
 
 push () {
+  git commit -am "release@$VER"
   git tag -a $VER -m "release@$VER"
   git push
 }
