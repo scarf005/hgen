@@ -1,5 +1,5 @@
 /*
-** < test.c > */
+** < 01.c > */
 
 int	lib_write(int fd, const t_string str);
 int	lib_writes(int fd, t_string arr[]);

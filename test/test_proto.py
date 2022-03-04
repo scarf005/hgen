@@ -5,8 +5,8 @@ from termcolor import cprint
 
 
 def test_protos():
-    generated = repr(Protos(Path("test/c/test.c")))
-    expected = Path("test/c/expected.c").read_text()
+    generated = repr(Protos(Path("test/given/01.c")))
+    expected = Path("test/expected/01.c").read_text()
 
     print(generated)
     cprint(f"{generated=}", "yellow")
