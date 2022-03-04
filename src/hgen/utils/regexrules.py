@@ -5,15 +5,15 @@ from re import IGNORECASE, compile
 
 def _make_flagged_comment_regex(which):
     COMMENT_BEGIN = r"[/][/*].*"
-    return compile(fr"{COMMENT_BEGIN}{which}", IGNORECASE)
+    return compile(rf"{COMMENT_BEGIN}{which}", IGNORECASE)
 
 
 class RegexRules:
     """Regex Rules to parse *.c and *.h files."""
 
-    # FUNCTION = compile(r"\b(?P<type>(\w*[ \t]*)+)[ \t](?P<name>[\w\*]*)\(")
-    # PARAM = compile(r"(?P<param>.*\))")
-    FUNCTION = compile(r"^(?P<type>(\w+ *)+)[ \t](?P<name>[\w\*]*)\(")
+    FUNCTION = compile(
+        r"^(?P<type>([\w\*]+\s+)+)(?P<name>[\w\*]*)(?P<param>\()"
+    )
     FLAG_BEGIN = _make_flagged_comment_regex(r"@(func|functions?)\b")
     FLAG_END = [
         compile("#endif"),
