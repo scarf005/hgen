@@ -11,14 +11,14 @@ def _make_flagged_comment_regex(which):
 class RegexRules:
     """Regex Rules to parse *.c and *.h files."""
 
-    FUNCTION = compile(
-        r"\b(?P<type>(\w* ?)+)\t(?P<name>[\w\*]*)(?P<param>\(.*\))"
-    )
+    # FUNCTION = compile(r"\b(?P<type>(\w*[ \t]*)+)[ \t](?P<name>[\w\*]*)\(")
+    # PARAM = compile(r"(?P<param>.*\))")
+    FUNCTION = compile(r"^(?P<type>(\w+ *)+)[ \t](?P<name>[\w\*]*)\(")
     FLAG_BEGIN = _make_flagged_comment_regex(r"@(func|functions?)\b")
     FLAG_END = [
         compile("#endif"),
         _make_flagged_comment_regex(r"=+.*=+"),
-        _make_flagged_comment_regex(r"@end"),
+        _make_flagged_comment_regex(r"@end\b"),
     ]
 
 

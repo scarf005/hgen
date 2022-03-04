@@ -27,21 +27,36 @@ class Protos:
                 f"{cstr('yellow', self.file.name)} "
                 f"{cstr('red',f'never had any BSD-style C function prototypes')}"
             )
-        # self.align_protos_indentation()
-        # self.prototypes.sort(key=len)
+
+    def is_line_func(self, line: str) -> bool:
+        return (
+            not any(banned in line for banned in ["static", "main"])
+            and RegexRules.FUNCTION.match(line) is not None
+        )
 
     def load_func_protos_from_file(self):
         lines = iter(get_lines_from(self.file))
         for line in lines:
-            if (
-                not any(banned in line for banned in ["static", "main"])
-                and RegexRules.FUNCTION.match(line)
-                and next(lines) == "{"
-            ):
+            if self.is_line_func(line):
+                if "{" in line:
+                    collected = line.replace("{", "").strip()
+                else:
+                    collected = line
+                    for inparam in lines:
+                        if inparam == "{":
+                            break
+                        elif "{" in inparam:
+                            collected += " " + inparam.replace(
+                                "{", ""
+                            ).rstrip().lstrip("\t")
+                            break
+                        else:
+                            collected += " " + inparam.lstrip("\t")
                 for incode in lines:
                     if incode == "}":
-                        self.prototypes.append(f"{line};")
                         break
+
+                self.prototypes.append(f"{collected};")
 
     def __len__(self) -> int:
         return len(self.prototypes)

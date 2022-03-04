@@ -70,10 +70,7 @@ def _align_protos_indentation(protolist: "list[Protos]"):
         i = 0
         while True:
             is_first = True
-            while (
-                len(params)
-                and len(result[i].replace(TAB, "....") + params[0]) < 79
-            ):
+            while len(params) and len(result[i].replace(TAB, "....") + params[0]) < 79:
                 if is_first:
                     is_first = False
                 else:
