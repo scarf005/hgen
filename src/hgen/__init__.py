@@ -8,7 +8,6 @@ from hgen.injector import insert_prototypes
 from hgen.proto import get_prototypes
 from hgen.utils import create_parser, visualize
 
-
 def update_header_prototypes(args: Namespace):
     prototypes: list[str] = []
 

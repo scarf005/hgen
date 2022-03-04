@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from hgen.utils import RegexRules, cprint, cstr, get_lines_from
+from hgen.utils import RegexRules, cstr, get_lines_from
 
 
 def get_flag_span(lines: "list[str]") -> "tuple[int, int]":

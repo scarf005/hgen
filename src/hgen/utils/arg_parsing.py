@@ -1,5 +1,7 @@
-from argparse import SUPPRESS, ArgumentParser
+from argparse import ArgumentParser
 from pathlib import Path
+
+from hgen._version import __version__
 
 from .utils import cstr
 
@@ -8,7 +10,7 @@ def create_parser():
     prog = "hgen"
     parser = ArgumentParser(
         prog=prog,
-        usage=f"{prog} [-h] -I header.h src [src ...] [-c path]",
+        usage=f"{prog} [-hv] -I header.h src [src ...] [-c path]",
         description=cstr("green", "HGEN: Header prototype GENerator"),
     )
     parser.add_argument(
@@ -39,6 +41,10 @@ def create_parser():
         help="Path shared by both src and dest",
         metavar="",
     )
+    parser.add_argument(
+        "-v", "--version", action="version", version=__version__
+    )
+
     # parser.add_argument(
     #     "-q",
     #     "--quiet",
@@ -48,3 +54,12 @@ def create_parser():
     #     metavar="",
     # )
     return parser
+
+
+if __name__ == "__main__":
+    from sys import argv
+
+    argv.append("--version")
+    parser = create_parser()
+    args = parser.parse_args()
+    print(args)
