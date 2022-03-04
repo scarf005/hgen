@@ -11,9 +11,7 @@ def _make_flagged_comment_regex(which):
 class RegexRules:
     """Regex Rules to parse *.c and *.h files."""
 
-    FUNCTION = compile(
-        r"^(?P<type>([\w\*]+\s+)+)(?P<name>[\w\*]*)(?P<param>\()"
-    )
+    FUNCTION = compile(r"^(?P<type>([\w\*]+\s+)+)(?P<name>[\w\*]+\()")
     FLAG_BEGIN = _make_flagged_comment_regex(r"@(func|functions?)\b")
     FLAG_END = [
         compile("#endif"),

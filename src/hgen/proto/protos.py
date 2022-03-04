@@ -6,6 +6,7 @@ from functools import cached_property
 from pathlib import Path
 
 from hgen.utils import RegexRules, cstr, get_lines_from
+from termcolor import cprint
 
 _NAME_HEADER = "/*\n** < {filename} > */"
 _COLOR_HEADER = "magenta"
@@ -30,33 +31,33 @@ class Protos:
 
     def is_line_func(self, line: str) -> bool:
         return (
-            not any(banned in line for banned in ["static", "main"])
+            not any(line.startswith(char) for char in "#{")
+            and not any(banned in line for banned in ["static", "main"])
             and RegexRules.FUNCTION.match(line) is not None
         )
 
     def load_func_protos_from_file(self):
         lines = iter(get_lines_from(self.file))
         for line in lines:
-            if self.is_line_func(line):
-                if "{" in line:
-                    collected = line.replace("{", "").strip()
-                else:
-                    collected = line
-                    for inparam in lines:
-                        if inparam == "{":
-                            break
-                        elif "{" in inparam:
-                            collected += " " + inparam.replace(
-                                "{", ""
-                            ).rstrip().lstrip("\t")
-                            break
-                        else:
-                            collected += " " + inparam.lstrip("\t")
-                for incode in lines:
-                    if incode == "}":
+            if not self.is_line_func(line):
+                continue
+            if line.endswith("{"):
+                collected = line.replace("{", "").strip().lstrip()
+            else:
+                collected = line
+                for inparam in lines:
+                    if inparam == "{":
                         break
+                    elif "{" in inparam:
+                        collected += inparam.replace("{", "").strip()
+                        break
+                    else:
+                        collected += inparam.lstrip("\t")
+            for inside_code in lines:
+                if inside_code == "}":
+                    break
 
-                self.prototypes.append(f"{collected};")
+            self.prototypes.append(f"{collected};")
 
     def __len__(self) -> int:
         return len(self.prototypes)
@@ -67,7 +68,8 @@ class Protos:
     def __str__(self) -> str:
         return "\n".join(
             [cstr(_COLOR_HEADER, self.header)]
-            + [Protos.colored_prototype(p) for p in self.prototypes]
+            + [p for p in self.prototypes]
+            # + [Protos.colored_prototype(p) for p in self.prototypes]
             + [""]
         )
 
@@ -88,11 +90,3 @@ class Protos:
             ptr, name = re.split(r"(^\**)", next(params))[1:]
             result += f" {ptr}{cstr(_COLOR_VAR, name)} "
         return result[:-1] + ");"
-
-
-if __name__ == "__main__":
-    curr = Protos(Path("../so_long/lib/src/libft/ystrlen.c"))
-    print(repr(curr))
-    # print(curr.filename)
-    # print(len(curr))
-    print(curr)
