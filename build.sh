@@ -1,14 +1,14 @@
 #!/bin/bash
 
-VER=$1
+TYPE=$1
 
 cleanup() {
-  rm dist/*
+  rm dist/* 2> /dev/null
 }
 
 setup_semver () {
-  VER=$1
-  python3 semver.py $VER
+  TYPE=$1
+  python3 semver.py $TYPE
 }
 
 build () {
@@ -25,8 +25,15 @@ refresh () {
   asdf reshim
 }
 
+push () {
+  git tag -a $VER -m "release@$VER"
+  git push
+}
+
+
 cleanup
-setup_semver $VER
+VER="v$(setup_semver $TYPE)"
 build
 upload
 refresh
+push
