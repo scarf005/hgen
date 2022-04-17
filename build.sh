@@ -37,5 +37,5 @@ cleanup
 VER="v$(setup_semver $TYPE)"
 build
 upload
-refresh
 push
+refresh

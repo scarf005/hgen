@@ -1,0 +1,53 @@
+@@grammar::C
+
+start
+    =
+    {function}
+    #scope
+    $
+    ;
+
+function
+    =
+    type:identifier name:identifier parameter:parameter
+    scope
+    ;
+
+scope
+    =
+    | '{' {scope | non_scope_any} '}'
+    | '{' non_scope_any '}'
+    ;
+
+non_scope_any = /[^{}]*/;
+
+
+parameter
+    =
+    | '(' @:'void' ')'
+    | '(' ','%{@+:parameter_arg} ')'
+    ;
+
+parameter_arg
+    =
+    {arg_type:arg_type {@:'*'} {@:identifier} {@:index}}+
+    ;
+
+arg_type
+    =
+    {@:identifier}+
+    ;
+
+index
+    =
+    '[' non_index_any ']'
+    ;
+
+non_index_any = /[^\[\]]*/;
+
+identifier::str
+    =
+    /[a-zA-Z_][a-zA-Z0-9_]*/
+    ;
+
+terminator = /[;\n]/ | $;
