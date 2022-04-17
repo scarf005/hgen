@@ -52,7 +52,7 @@ class Protos:
                         collected += inparam.replace("{", "").strip()
                         break
                     else:
-                        collected += inparam.lstrip("\t")
+                        collected += inparam.lstrip("\t ")
             for inside_code in lines:
                 if inside_code == "}":
                     break

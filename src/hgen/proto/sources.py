@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+import re
 from itertools import chain
 from pathlib import Path
 
 from hgen.proto import Protos
 from hgen.utils import TAB, cprint, cstr
+from hgen.utils.regexrules import RegexRules
 
 
 def _crawl_prototypes(src_path: Path) -> "list[Protos]":
@@ -47,7 +49,9 @@ def _crawl_prototypes(src_path: Path) -> "list[Protos]":
 # but it works.
 def _align_protos_indentation(protolist: "list[Protos]"):
     def before_len(proto):
-        return len(proto.split(TAB)[0])
+        types = re.findall(RegexRules.FUNCTION_SPLIT, proto)[0][0]
+        return len(types.strip(" \t"))
+        # return len(proto.split(TAB)[0])
 
     def get_longest_prototype_len():
         result = 0
@@ -58,11 +62,18 @@ def _align_protos_indentation(protolist: "list[Protos]"):
         return result + 4  # tabs
 
     def in_loop():
-        types, funcname_params = proto.split(TAB)
+        types, funcname_params = re.findall(RegexRules.FUNCTION_SPLIT, proto)[
+            0
+        ]
+        # proto.split(TAB)
+        types: str = types.strip(" \t")
+        print(f"{types = }, {funcname_params = }")
         funcname, param = funcname_params.split("(")
+        print(f"{funcname = }, {param = }")
         params = param.split(", ")
 
         to_pad = longest // 4 - before_len(proto) // 4
+        print(len(types), before_len(proto))
         nl_tabs = TAB * (1 + len(types) // 4 + to_pad)
 
         result = [f"{types}{TAB * to_pad}{funcname}("]
@@ -70,7 +81,10 @@ def _align_protos_indentation(protolist: "list[Protos]"):
         i = 0
         while True:
             is_first = True
-            while len(params) and len(result[i].replace(TAB, "....") + params[0]) < 79:
+            while (
+                len(params)
+                and len(result[i].replace(TAB, "....") + params[0]) < 79
+            ):
                 if is_first:
                     is_first = False
                 else:
