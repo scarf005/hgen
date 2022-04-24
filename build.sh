@@ -16,12 +16,12 @@ build () {
 }
 
 upload () {
-  # python3 -m twine upload dist/*
+  python3 -m twine upload dist/*
   python3 -m twine upload --repository testpypi dist/*
 }
 
 refresh () {
-  sleep 1
+  sleep 10
   pip3 install --upgrade hgen
   asdf reshim
 }
