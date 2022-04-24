@@ -67,13 +67,13 @@ def _align_protos_indentation(protolist: "list[Protos]"):
         ]
         # proto.split(TAB)
         types: str = types.strip(" \t")
-        print(f"{types = }, {funcname_params = }")
+        # print(f"{types = }, {funcname_params = }")
         funcname, param = funcname_params.split("(")
-        print(f"{funcname = }, {param = }")
+        # print(f"{funcname = }, {param = }")
         params = param.split(", ")
 
         to_pad = longest // 4 - before_len(proto) // 4
-        print(len(types), before_len(proto))
+        # print(len(types), before_len(proto))
         nl_tabs = TAB * (1 + len(types) // 4 + to_pad)
 
         result = [f"{types}{TAB * to_pad}{funcname}("]
