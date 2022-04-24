@@ -21,7 +21,7 @@ def try_insert(dest: Path, protos: "list[str]") -> bool:
     lines = get_lines_from(dest)
     try:
         before, after = cut_lines_by_flag_span(lines, get_flag_span(lines))
-        dest.write_text("\n".join(before + protos + after))
+        dest.write_text("\n".join(before + protos + after) + "\n")
         return True
         # break
     except SyntaxError:

@@ -9,7 +9,7 @@ from hgen.utils import TAB, cprint, cstr
 from hgen.utils.regexrules import RegexRules
 
 
-def _crawl_prototypes(src_path: Path) -> "list[Protos]":
+def crawl_prototypes(src_path: Path) -> "list[Protos]":
     def crawl_file(src: Path):
         status, res = "green", ""
         try:
@@ -47,39 +47,51 @@ def _crawl_prototypes(src_path: Path) -> "list[Protos]":
 
 # this is the dirtiest loop i've ever laid my hands on.
 # but it works.
-def _align_protos_indentation(protolist: "list[Protos]"):
-    def before_len(proto):
-        types = re.findall(RegexRules.FUNCTION_SPLIT, proto)[0][0]
-        return len(types.strip(" \t"))
+def align_protos_indentation(protolist: "list[Protos]"):
+    def get_types_and_params(proto: str) -> "tuple[str, str]":
+        types, funcname_params = re.findall(RegexRules.FUNCTION_SPLIT, proto)[
+            0
+        ]
+        return types.strip(" \t"), funcname_params
+
+    def get_funcname_and_params(
+        funcname_params: str,
+    ) -> "tuple[str, list[str]]":
+        try:
+            funcname, param = funcname_params.split("(")
+            params = [p.strip() for p in param.split(",")]
+
+            return funcname, params
+        except ValueError as e:
+            raise ValueError(
+                cstr("red", f'{e} while splitting "{funcname_params}"')
+            )
+
+    def before_len(proto: str) -> int:
+        types = get_types_and_params(proto)[0]
+        return len(types)
         # return len(proto.split(TAB)[0])
 
-    def get_longest_prototype_len():
+    def get_longest_prototype_len(protolist: "list[Protos]"):
         result = 0
         for container in protolist:
             for proto in container:
                 result = max(result, before_len(proto))
-
         return result + 4  # tabs
 
     def in_loop():
-        types, funcname_params = re.findall(RegexRules.FUNCTION_SPLIT, proto)[
-            0
-        ]
-        # proto.split(TAB)
-        types: str = types.strip(" \t")
+        types, funcname_params = get_types_and_params(proto)
+        funcname, params = get_funcname_and_params(funcname_params)
         # print(f"{types = }, {funcname_params = }")
-        funcname, param = funcname_params.split("(")
         # print(f"{funcname = }, {param = }")
-        params = param.split(", ")
-
+        # print(f"{longest = }")
         to_pad = longest // 4 - before_len(proto) // 4
-        # print(len(types), before_len(proto))
-        nl_tabs = TAB * (1 + len(types) // 4 + to_pad)
-
+        nl_tabs = TAB * (1 + before_len(proto) // 4 + to_pad)
+        # print(before_len(proto), nl_tabs)
         result = [f"{types}{TAB * to_pad}{funcname}("]
         # print(result)
         i = 0
-        while True:
+        while i < 100:
             is_first = True
             while (
                 len(params)
@@ -97,9 +109,17 @@ def _align_protos_indentation(protolist: "list[Protos]"):
                 result.append(nl_tabs)
             else:
                 break
+        else:
+            raise ValueError(
+                cstr(
+                    "red",
+                    f"{len(params)} params left after {i} iterations",
+                )
+            )
         return result
 
-    longest = get_longest_prototype_len()
+    cprint("red", "start")
+    longest = get_longest_prototype_len(protolist)
 
     for container in protolist:
         # print(container)
@@ -111,14 +131,14 @@ def _align_protos_indentation(protolist: "list[Protos]"):
         container.prototypes = results
 
 
-def _protolist_to_strlist(protolist: "list[Protos]") -> "list[str]":
+def protolist_to_strlist(protolist: "list[Protos]") -> "list[str]":
     return [repr(s) for s in chain(protolist)]
 
 
 def get_prototypes(src_path: Path) -> "list[str]":
-    protolist = _crawl_prototypes(src_path)
-    _align_protos_indentation(protolist)
-    return _protolist_to_strlist(protolist)
+    protolist = crawl_prototypes(src_path)
+    align_protos_indentation(protolist)
+    return protolist_to_strlist(protolist)
 
 
 if __name__ == "__main__":

@@ -31,8 +31,8 @@ class Protos:
 
     def is_line_func(self, line: str) -> bool:
         return (
-            not any(line.startswith(char) for char in "#{")
-            and not any(banned in line for banned in ["static", "main"])
+            not any(line.startswith(v) for v in ["static", "#", "{"])
+            and not any(banned in line for banned in ["main("])
             and RegexRules.FUNCTION.match(line) is not None
         )
 
