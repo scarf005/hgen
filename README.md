@@ -7,9 +7,10 @@
 Injects c function prototypes(BSD-style) into header.
 
 limitations
-- cannot capture multi-line function prototypes
-- cannot capture K&R style definitions
 - breaks when function does not work with norminette
+- that means a function must not have any whitespace before its return type
+- and exactly one tab must seperate its return type and name
+
 ## Usage
 
 `hgen [-h] -I header.h src.c [src/ ...] [-c path]`
